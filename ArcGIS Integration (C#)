@@ -1,0 +1,54 @@
+
+ArcGIS Integration (C#):
+
+Utilize the ArcGIS API for .NET to integrate mapping capabilities into the House Finder application.
+Retrieve property location data from the database and display it on interactive maps.
+Implement features such as map markers, property clustering, and zoom functionality using ArcGIS map components
+
+
+
+
+Sample code 
+using System;
+using Esri.ArcGISRuntime;
+using Esri.ArcGISRuntime.Mapping;
+using Esri.ArcGISRuntime.UI.Controls;
+using System.Collections.Generic;
+
+namespace HouseFinder
+{
+    public class MapComponent
+    {
+        private MapView mapView;
+        private GraphicsOverlay graphicsOverlay;
+
+        public MapComponent()
+        {
+            mapView = new MapView();
+            graphicsOverlay = new GraphicsOverlay();
+            mapView.GraphicsOverlays.Add(graphicsOverlay);
+        }
+
+        public void DisplayProperties(List<Property> properties)
+        {
+            graphicsOverlay.Graphics.Clear();
+
+            foreach (Property property in properties)
+            {
+                MapPoint location = new MapPoint(property.Longitude, property.Latitude, SpatialReferences.Wgs84);
+
+                // Create a marker symbol for the property location
+                SimpleMarkerSymbol markerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbolStyle.Circle, System.Drawing.Color.Red, 10);
+
+                // Create a graphic for the property location
+                Graphic propertyGraphic = new Graphic(location, markerSymbol);
+
+                // Add the graphic to the graphics overlay
+                graphicsOverlay.Graphics.Add(propertyGraphic);
+            }
+
+            // Zoom to the extent of the graphics overlay
+            mapView.SetViewpointGeometryAsync(graphicsOverlay.Extent, 50);
+        }
+    }
+}
