@@ -1,0 +1,79 @@
+----------------------------------------------
+|                  HouseFinderApp             |
+----------------------------------------------
+| - propertyDatabase: PropertyDatabase        |
+| - mapComponent: MapComponent                |
+| - powerBIIntegration: PowerBIIntegration    |
+----------------------------------------------
+| + start(): void                             |
+----------------------------------------------
+
+----------------------------------------------
+|                   Property                  |
+----------------------------------------------
+| - id: int                                  |
+| - location: string                         |
+| - rates: decimal                           |
+| - propertyType: string                     |
+| - amenities: string[]                      |
+----------------------------------------------
+| + getId(): int                             |
+| + getLocation(): string                    |
+| + getRates(): decimal                      |
+| + getPropertyType(): string                |
+| + getAmenities(): string[]                 |
+----------------------------------------------
+
+----------------------------------------------
+|               PropertyDatabase              |
+----------------------------------------------
+| - properties: List<Property>                |
+----------------------------------------------
+| + searchProperties(criteria: SearchFilter): List<Property> |
+| + filterProperties(criteria: SearchFilter): List<Property> |
+----------------------------------------------
+
+----------------------------------------------
+|               SearchFilter                  |
+----------------------------------------------
+| - rates: decimal                           |
+| - location: string                         |
+| - propertyType: string                     |
+| - amenities: List<string>                   |
+----------------------------------------------
+| + getRates(): decimal                      |
+| + getLocation(): string                    |
+| + getPropertyType(): string                |
+| + getAmenities(): List<string>              |
+----------------------------------------------
+
+----------------------------------------------
+|              MapComponent                   |
+----------------------------------------------
+| - mapData: MapData                          |
+----------------------------------------------
+| + displayProperties(properties: List<Property>): void |
+| + highlightProperty(property: Property): void |
+----------------------------------------------
+
+----------------------------------------------
+|          PowerBIIntegration                 |
+----------------------------------------------
+| - accessToken: string                       |
+----------------------------------------------
+| + authenticate(): void                      |
+| + getPowerBIReports(): List<PowerBIReport>  |
+| + displayPowerBIReport(report: PowerBIReport): void |
+----------------------------------------------
+
+----------------------------------------------
+|               PowerBIReport                 |
+----------------------------------------------
+| - reportId: string                          |
+| - name: string                              |
+| - url: string                               |
+----------------------------------------------
+| + getReportId(): string                     |
+| + getName(): string                         |
+| + getUrl(): string                          |
+----------------------------------------------
