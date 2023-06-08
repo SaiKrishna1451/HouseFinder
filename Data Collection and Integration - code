@@ -1,0 +1,73 @@
+Objective:-
+1.Data Collection and Integration (C#):
+
+Developed data collection modules in C# to retrieve real estate property data from various sources and store it in a centralized database.
+Used APIs or web scraping techniques to collect data on property rates, location, property type, and other relevant information.
+Implemented data integration processes to consolidate and update the property database regularly.
+
+Sample Code -----
+
+
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+
+namespace HouseFinder
+{
+    public class Property
+    {
+        public int Id { get; set; }
+        public string Location { get; set; }
+        public decimal Rates { get; set; }
+        public string PropertyType { get; set; }
+        public List<string> Amenities { get; set; }
+    }
+
+    public class PropertyDatabase
+    {
+        private string connectionString;
+        
+        public PropertyDatabase(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
+
+        public List<Property> SearchProperties(decimal minRate, decimal maxRate, string location, string propertyType)
+        {
+            List<Property> properties = new List<Property>();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = "SELECT * FROM Properties WHERE Rates >= @MinRate AND Rates <= @MaxRate AND Location = @Location AND PropertyType = @PropertyType";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@MinRate", minRate);
+                command.Parameters.AddWithValue("@MaxRate", maxRate);
+                command.Parameters.AddWithValue("@Location", location);
+                command.Parameters.AddWithValue("@PropertyType", propertyType);
+
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Property property = new Property
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        Location = reader["Location"].ToString(),
+                        Rates = Convert.ToDecimal(reader["Rates"]),
+                        PropertyType = reader["PropertyType"].ToString(),
+                        Amenities = new List<string>()
+                    };
+                    
+                    // Add any other required properties and amenities based on your database structure
+
+                    properties.Add(property);
+                }
+
+                reader.Close();
+            }
+
+            return properties;
+        }
+    }
+}
