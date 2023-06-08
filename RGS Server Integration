@@ -1,0 +1,70 @@
+
+RGS Server Integration (C#):
+
+Utilize the RGS SDK and server-side code in C# to integrate RGS Server into the House Finder application.
+Implement code to render high-quality property images and virtual tours on the RGS Server.
+Enable remote access to these visuals by transmitting them to client devices using RGS protocols.
+
+
+
+
+
+using Microsoft.Rgs.Server;
+using System;
+using System.Drawing;
+using System.IO;
+
+namespace HouseFinder
+{
+    public class RGSIntegration
+    {
+        private RgsServer rgsServer;
+
+        public RGSIntegration()
+        {
+            rgsServer = new RgsServer();
+        }
+
+        public byte[] RenderPropertyImage(string imagePath, int width, int height)
+        {
+            using (Bitmap image = new Bitmap(imagePath))
+            {
+                // Resize the image to the specified dimensions
+                Image resizedImage = image.GetThumbnailImage(width, height, null, IntPtr.Zero);
+
+                // Convert the resized image to byte array
+                byte[] imageBytes;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    resizedImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    imageBytes = ms.ToArray();
+                }
+
+                return imageBytes;
+            }
+        }
+
+        public void StartRgsServer()
+        {
+            rgsServer.Start();
+
+            // Register property image rendering service
+            rgsServer.Register("RenderPropertyImage", (request, response) =>
+            {
+                string imagePath = request.Parameters.Get<string>("ImagePath");
+                int width = request.Parameters.Get<int>("Width");
+                int height = request.Parameters.Get<int>("Height");
+
+                byte[] imageBytes = RenderPropertyImage(imagePath, width, height);
+
+                // Send the image bytes as response
+                response.Parameters.Set<byte[]>("ImageBytes", imageBytes);
+            });
+        }
+
+        public void StopRgsServer()
+        {
+            rgsServer.Stop();
+        }
+    }
+}
