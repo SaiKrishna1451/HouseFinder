@@ -1,0 +1,94 @@
+Use the Power BI API and Power BI Embedded to integrate Power BI into the House Finder application.
+Create Power BI reports and dashboards using Power BI Desktop or Power BI service, connecting them to the real estate property database.
+Embed Power BI reports and dashboards into ReactJS components, allowing users to view and interact with data visualizations within the House Finder application.
+
+Certainly! Here's an example of how you can integrate Power BI into the House Finder application using the Power BI API, Power BI Embedded, and ReactJS:
+
+1. Set up Power BI and create reports:
+   - Create a Power BI account or use an existing one.
+   - Use Power BI Desktop or Power BI service to create reports and dashboards based on the real estate property database.
+   - Connect the reports to the database and design visualizations and insights related to property rates, locations, and other relevant data.
+   - Publish the reports to the Power BI service.
+
+2. Install required dependencies:
+   - Open a terminal in your ReactJS project directory.
+   - Run the following command to install the necessary dependencies:
+     ```
+     npm install powerbi-client
+     ```
+
+3. Create a Power BI component:
+   - In the `src` directory, create a new file called `PowerBIComponent.js`.
+   - Add the following code to the `PowerBIComponent.js` file:
+   ```jsx
+   import React, { useEffect, useRef } from 'react';
+   import * as powerbi from 'powerbi-client';
+
+   const PowerBIComponent = () => {
+     const powerBiContainerRef = useRef(null);
+     const reportRef = useRef(null);
+
+     useEffect(() => {
+       const embedConfig = {
+         type: 'report',
+         id: 'your_report_id',
+         embedUrl: 'your_report_embed_url',
+         accessToken: 'your_access_token',
+         tokenType: powerbi.models.TokenType.Embed,
+         settings: {
+           filterPaneEnabled: false,
+           navContentPaneEnabled: true,
+         },
+       };
+
+       const reportContainer = powerBiContainerRef.current;
+       reportRef.current = powerbi.embed(reportContainer, embedConfig);
+     }, []);
+
+     return <div ref={powerBiContainerRef} style={{ height: '600px' }}></div>;
+   };
+
+   export default PowerBIComponent;
+   ```
+
+4. Update the `App.js` file:
+   - Import the `PowerBIComponent`:
+   ```jsx
+   import PowerBIComponent from './components/PowerBIComponent';
+   ```
+
+   - Replace the existing JSX code in the `App` component with the following code:
+   ```jsx
+   const App = () => {
+     // Other code...
+
+     return (
+       <div>
+         <h1>House Finder</h1>
+         <SearchForm onSearch={handleSearch} />
+         <PropertyList properties={properties} />
+         <PowerBIComponent />
+       </div>
+     );
+   };
+   ```
+
+5. Obtain the required values for embedding:
+   - Go to the Power BI service and open the report you want to embed.
+   - Click on the "File" menu and select "Embed" to get the report ID and embed URL.
+   - Generate an access token for embedding by following the Power BI documentation.
+
+6. Update the `embedConfig` in the `PowerBIComponent`:
+   - Replace `'your_report_id'` with the report ID obtained from Power BI.
+   - Replace `'your_report_embed_url'` with the embed URL obtained from Power BI.
+   - Replace `'your_access_token'` with the access token generated for embedding.
+
+With these steps, you have set up Power BI integration into the House Finder application. The `PowerBIComponent` renders the Power BI report inside a container. The report is embedded using the Power BI API, and users can view and interact with the data visualizations within the House Finder application.
+
+Please note that you need to replace `'your_report_id'`, `'your_report_embed_url'`, and `'your_access_token'` with the actual values obtained from your Power BI report and access token. Additionally, you may need to adjust
+
+ the styling and dimensions of the Power BI container to fit your application's design.
+
+Ensure that you have the necessary Power BI account, API access, and appropriate licensing to use Power BI Embedded features.
+
+Remember to handle authentication and authorization securely, and follow best practices for embedding Power BI reports into your application.
