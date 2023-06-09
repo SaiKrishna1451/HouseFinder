@@ -1,0 +1,125 @@
+Advanced Search and Filtering:
+
+Use C# and the ArcGIS API for .NET to implement advanced search algorithms that filter properties based on rates, location, property type, and other criteria.
+Retrieve filtered data from the database and display it dynamically in the ReactJS components. 
+Certainly! Here's an example of how you can implement advanced search and filtering using C# and the ArcGIS API for .NET in the House Finder application:
+
+1. Update the `PropertyDatabase` class:
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+
+namespace HouseFinder
+{
+    public class PropertyDatabase
+    {
+        private string connectionString;
+
+        public PropertyDatabase(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
+
+        public List<Property> SearchProperties(decimal minRate, decimal maxRate, string location, string propertyType)
+        {
+            List<Property> properties = new List<Property>();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = "SELECT * FROM Properties WHERE Rates >= @MinRate AND Rates <= @MaxRate AND Location = @Location AND PropertyType = @PropertyType";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@MinRate", minRate);
+                command.Parameters.AddWithValue("@MaxRate", maxRate);
+                command.Parameters.AddWithValue("@Location", location);
+                command.Parameters.AddWithValue("@PropertyType", propertyType);
+
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Property property = new Property
+                    {
+                        Id = Convert.ToInt32(reader["Id"]),
+                        Location = reader["Location"].ToString(),
+                        Rates = Convert.ToDecimal(reader["Rates"]),
+                        PropertyType = reader["PropertyType"].ToString()
+                    };
+
+                    properties.Add(property);
+                }
+
+                reader.Close();
+            }
+
+            return properties;
+        }
+    }
+}
+```
+
+In this example, we update the `SearchProperties` method in the `PropertyDatabase` class to perform advanced search and filtering based on rates, location, and property type.
+
+2. Update the `App.js` file:
+```jsx
+import React, { useState } from 'react';
+import SearchForm from './components/SearchForm';
+import PropertyList from './components/PropertyList';
+
+const App = () => {
+  const [properties, setProperties] = useState([]);
+
+  const handleSearch = (searchCriteria) => {
+    // Call the API or perform database query to fetch property listings based on the search criteria
+    // Update the 'properties' state with the retrieved data
+    // For demonstration purposes, we'll set some dummy data here
+    const dummyProperties = [
+      {
+        id: 1,
+        location: 'Los Angeles',
+        rates: 2000,
+        propertyType: 'Apartment'
+      },
+      {
+        id: 2,
+        location: 'New York',
+        rates: 3000,
+        propertyType: 'House'
+      }
+    ];
+
+    // Apply advanced search and filtering based on the search criteria
+    const filteredProperties = dummyProperties.filter(property =>
+      property.rates >= searchCriteria.minRate &&
+      property.rates <= searchCriteria.maxRate &&
+      property.location === searchCriteria.location &&
+      property.propertyType === searchCriteria.propertyType
+    );
+
+    setProperties(filteredProperties);
+  };
+
+  return (
+    <div>
+      <h1>House Finder</h1>
+      <SearchForm onSearch={handleSearch} />
+      <PropertyList properties={properties} />
+    </div>
+  );
+};
+
+export default App;
+```
+
+In this example, we update the `handleSearch` function in the `App` component to apply advanced search and filtering logic based on the search criteria.
+
+When the user submits the search form, the `handleSearch` function is called. It retrieves the search criteria, applies the filter conditions on the `dummyProperties` data, and updates the `properties` state with the filtered results.
+
+Please note that this is a simplified example, and you would need to adapt the code to fit your specific data
+
+ retrieval and filtering mechanisms. Instead of using dummy data, you would typically call an API or perform a database query to fetch the properties based on the search criteria.
+
+Feel free to customize the filtering logic and update the database query in the `PropertyDatabase` class based on your requirements and data model.
+
+Remember to ensure proper error handling, input validation, and security measures when implementing advanced search and filtering functionality.
