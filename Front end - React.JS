@@ -75,7 +75,6 @@ First, make sure you have Node.js installed on your machine. Then, follow these 
    - Add the following code to the `PropertyList.js` file:
    ```jsx
    import React from 'react';
-
    const PropertyList = ({ properties }) => {
      return (
        <div>
@@ -96,19 +95,42 @@ First, make sure you have Node.js installed on your machine. Then, follow these 
 4. Update the `App.js` file:
    - Replace the existing code in the `App.js` file with the following code:
    ```jsx
-   import React, { useState } from 'react';
-   import SearchForm from './components/SearchForm';
-   import PropertyList from './components/PropertyList';
+  import React, { useState } from 'react';
+import SearchForm from './components/SearchForm';
+import PropertyList from './components/PropertyList';
 
-   const App = () => {
-     const [properties, setProperties] = useState([]);
+const App = () => {
+  const [properties, setProperties] = useState([]);
 
-     const handleSearch = (searchCriteria) => {
-       // Call the API or perform database query to fetch property listings based on the search criteria
-       // Update the 'properties' state with the retrieved data
-       // For demonstration purposes, we'll set some dummy data here
-       const dummyProperties = [
-         {
-           id: 1,
-           location: 'Los Angeles',
-           rates: 2000
+  const handleSearch = (searchCriteria) => {
+    // Call the API or perform database query to fetch property listings based on the search criteria
+    // Update the 'properties' state with the retrieved data
+    // For demonstration purposes, we'll set some dummy data here
+    const dummyProperties = [
+      {
+        id: 1,
+        location: 'Los Angeles',
+        rates: 2000,
+        propertyType: 'Apartment',
+      },
+      {
+        id: 2,
+        location: 'New York',
+        rates: 3000,
+        propertyType: 'House',
+      },
+    ];
+    setProperties(dummyProperties);
+  };
+
+  return (
+    <div>
+      <h1>House Finder</h1>
+      <SearchForm onSearch={handleSearch} />
+      <PropertyList properties={properties} />
+    </div>
+  );
+};
+
+export default App;
+
